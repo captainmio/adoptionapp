@@ -12,4 +12,6 @@ class AuthService {
 
     return response;
   }
+
+  Future register({required Map<String, String> payload}) async {}
 }

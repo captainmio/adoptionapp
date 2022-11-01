@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_app/components/gsnackbar.dart';
 import 'package:plant_app/services/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,15 +15,25 @@ class _LoginState extends State<Login> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  void _login() async {
-    Map<String, String> data = {'email': email.text, 'password': password.text};
-    http.Response response = await AuthService().login(payload: data);
-    Map<String, dynamic> responseMap = json.decode(response.body);
+  void _login(BuildContext context) async {
+    if (email.text.isNotEmpty && password.text.isNotEmpty) {
+      Map<String, String> data = {
+        'email': email.text,
+        'password': password.text
+      };
+      http.Response response = await AuthService().login(payload: data);
+      Map<String, dynamic> responseMap = json.decode(response.body);
 
-    if (response.statusCode == 200) {
-      Navigator.pushNamed(context, '/home');
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        Navigator.pushNamed(context, '/home');
+      } else {
+        GSnackbar.show(context, type: 'error', message: responseMap['message']);
+        // print(responseMap['message']);
+      }
     } else {
-      print(responseMap['message']);
+      GSnackbar.show(context, type: 'error', message: 'Fill-in login details');
     }
   }
 
@@ -72,7 +83,7 @@ class _LoginState extends State<Login> {
             child: ElevatedButton(
               child: const Text('Login'),
               onPressed: () {
-                _login();
+                _login(context);
               },
             ),
           ),
