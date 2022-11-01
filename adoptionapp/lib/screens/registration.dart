@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:plant_app/components/gsnackbar.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+import 'package:plant_app/services/auth_service.dart';
 
 class Registration extends StatefulWidget {
   const Registration({super.key});
@@ -8,13 +13,50 @@ class Registration extends StatefulWidget {
 }
 
 class _RegistrationState extends State<Registration> {
+  TextEditingController fullname = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
+
+  _register() async {
+    if (fullname.text.isNotEmpty &&
+        email.text.isNotEmpty &&
+        password.text.isNotEmpty &&
+        confirmPassword.text.isNotEmpty) {
+      // validate first if password and confirmPassword are the same
+      if (password.text == confirmPassword.text) {
+        Map<String, String> data = {
+          'name': fullname.text,
+          'email': email.text,
+          'password': password.text,
+        };
+
+        http.Response response = await AuthService().register(payload: data);
+        Map<String, dynamic> responseMap = json.decode(response.body);
+
+        if (!mounted) return;
+
+        if (response.statusCode == 200) {
+          GSnackbar.show(context,
+              type: 'error', message: "Successfully sign-up, Please login");
+          Navigator.pushNamed(context, '/');
+        } else {
+          GSnackbar.show(context,
+              type: 'error', message: responseMap['message']);
+          // print(responseMap['message']);
+        }
+      } else {
+        GSnackbar.show(context,
+            type: 'error', message: 'Password and Confirm Password not match');
+      }
+    } else {
+      GSnackbar.show(context,
+          type: 'error', message: 'Please fill-up all fields');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController fullname = TextEditingController();
-    TextEditingController email = TextEditingController();
-    TextEditingController password = TextEditingController();
-    TextEditingController confirm_password = TextEditingController();
-
     return Scaffold(
         body: ListView(
       children: [
@@ -74,7 +116,7 @@ class _RegistrationState extends State<Registration> {
           alignment: Alignment.center,
           padding: const EdgeInsets.all(10),
           child: TextField(
-            controller: confirm_password,
+            controller: confirmPassword,
             obscureText: true,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
@@ -88,7 +130,7 @@ class _RegistrationState extends State<Registration> {
           child: ElevatedButton(
             child: const Text('Signup'),
             onPressed: () {
-              print("Registering . . .");
+              _register();
             },
           ),
         ),
