@@ -1,15 +1,5 @@
 # Auto detect text files and perform LF normalization
-*        text=auto
+* text=auto
 
 # Always perform LF normalization on these files
-*.dart   text
-*.gradle text
-*.html   text
-*.java   text
-*.json   text
-*.md     text
-*.py     text
-*.sh     text
-*.txt    text
-*.xml    text
-*.yaml   text
+*.dart linguist-language=Dart
