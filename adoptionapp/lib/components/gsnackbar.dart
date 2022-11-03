@@ -6,7 +6,7 @@ class GSnackbar {
     required String type,
     required String message,
   }) {
-    MaterialAccentColor defaulBG = Colors.greenAccent;
+    Color defaulBG = Colors.green;
 
     if (type == 'error') {
       defaulBG = Colors.redAccent;

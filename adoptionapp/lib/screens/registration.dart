@@ -38,12 +38,16 @@ class _RegistrationState extends State<Registration> {
 
         if (response.statusCode == 200) {
           GSnackbar.show(context,
-              type: 'error', message: "Successfully sign-up, Please login");
+              type: 'success', message: "Successfully sign-up, Please login");
           Navigator.pushNamed(context, '/');
         } else {
           GSnackbar.show(context,
               type: 'error', message: responseMap['message']);
-          // print(responseMap['message']);
+
+          // TODO, need to display validation errors
+          // if (responseMap['errors'].length > 0) {
+          //   errors = responseMap['errors'];
+          // }
         }
       } else {
         GSnackbar.show(context,
